@@ -16,7 +16,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
         fontFamily: 'Poppins',
-        primaryColor: Color(0xff53855E),
         accentColor: Color(0xff53855E),
       ),
       home: ProductListing(),
