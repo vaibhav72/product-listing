@@ -87,7 +87,7 @@ class _ViewProductState extends State<ViewProduct> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(20.0),
               child: Card(
                 elevation: 25,
                 shape: RoundedRectangleBorder(
