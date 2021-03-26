@@ -21,4 +21,6 @@ class MetaIcons {
   static const String games = 'assets/icons/games.svg';
   static const String home = 'assets/icons/home.svg';
   static const String tools = 'assets/icons/tools.svg';
+  static const String rupee = 'assets/icons/rupee.svg';
+  static const String error = 'assets/icons/error.png';
 }

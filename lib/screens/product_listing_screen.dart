@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:assignment/handlers/product_list_handler.dart';
 import 'package:assignment/models/product_model.dart';
 import 'package:assignment/screens/view_product.dart';
+import 'package:assignment/util/meta_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -15,6 +16,7 @@ class ProductListing extends StatefulWidget {
 }
 
 class _ProductListingState extends State<ProductListing> {
+  final ScrollController scrollController = ScrollController();
   Color color1 = Color(0xff53855E);
   Color color2 = Color(0xff20AB87);
   Color color3 = Color(0xff00938B);
@@ -22,6 +24,7 @@ class _ProductListingState extends State<ProductListing> {
   Color color5 = Color(0xff206072);
   Color color6 = Color(0xff2F4858);
   List<Product> productList = [];
+  bool showReloading = false;
 
   @override
   void initState() {
@@ -37,11 +40,13 @@ class _ProductListingState extends State<ProductListing> {
         backgroundColor: color1,
         title: Text("your App Name"),
       ),
-      body: productList.length > 1
+      body: productList != null && productList.length > 1
           ? Container(
               color: Colors.white70,
               child: Container(
                 child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    controller: scrollController,
                     itemCount: productList.length,
                     itemBuilder: (context, index) {
                       return productTile(index);
@@ -55,9 +60,6 @@ class _ProductListingState extends State<ProductListing> {
   }
 
   productTile(int index) {
-    print(productList[index].productName +
-        " and " +
-        productList[index].productCategory);
     return GestureDetector(
       onTap: () => Navigator.push(
           context,
@@ -81,10 +83,7 @@ class _ProductListingState extends State<ProductListing> {
                 children: [
                   ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: FadeInImage.memoryNetwork(
-                          fit: BoxFit.cover,
-                          placeholder: kTransparentImage,
-                          image: productList[index].productImage)),
+                      child: getImage(index)),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -103,7 +102,7 @@ class _ProductListingState extends State<ProductListing> {
                                 color6
                               ])),
                       child: Padding(
-                        padding: const EdgeInsets.all(18.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,32 +122,45 @@ class _ProductListingState extends State<ProductListing> {
                                         letterSpacing: 1.2),
                                   ),
                                 ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SvgPicture.asset(
-                                      productList[index].categoryIcon,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .03,
-                                      width: MediaQuery.of(context).size.width *
-                                          .03,
-                                    ),
+                                SvgPicture.asset(
+                                  MetaIcons.rupee,
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    productList[index].productCost,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
                                   ),
-                                )
+                                ),
                               ],
                             ),
-                            Expanded(
-                                child: Text(
-                              productList[index].productSummary,
-                              style: TextStyle(color: Colors.black87),
-                            ))
+                            Text(productList[index].productSummary),
                           ],
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        shape: CircleBorder(),
+                        elevation: 10,
+                        child: CircleAvatar(
+                          backgroundColor: color1,
+                          child: SvgPicture.asset(
+                            productList[index].categoryIcon,
+                            height: MediaQuery.of(context).size.height * .03,
+                            width: MediaQuery.of(context).size.width * .03,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -156,6 +168,31 @@ class _ProductListingState extends State<ProductListing> {
         ),
       ),
     );
+  }
+
+  getImage(int index) {
+    try {
+      return FadeInImage.memoryNetwork(
+          imageErrorBuilder:
+              (BuildContext context, Object error, StackTrace trace) {
+            print(error);
+            return Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image(
+                    height: 100,
+                    width: 100,
+                    image: AssetImage(MetaIcons.error)),
+              ),
+            );
+          },
+          fit: BoxFit.cover,
+          placeholder: kTransparentImage,
+          image: productList[index].productImage);
+    } catch (NetworkImageLoadException) {
+      print("hey");
+    }
   }
 
   getImagePalette(ImageProvider imageProvider) async {

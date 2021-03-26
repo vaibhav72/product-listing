@@ -14,7 +14,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: 'Poppins'),
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+        primaryColor: Color(0xff53855E),
+        accentColor: Color(0xff53855E),
+      ),
       home: ProductListing(),
     );
   }
