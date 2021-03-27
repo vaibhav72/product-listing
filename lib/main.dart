@@ -1,4 +1,5 @@
 import 'package:assignment/screens/product_listing_screen.dart';
+import 'package:assignment/util/meta_colors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
         fontFamily: 'Poppins',
-        accentColor: Color(0xff53855E),
+        accentColor: MetaColors.primaryColor,
       ),
       home: ProductListing(),
     );

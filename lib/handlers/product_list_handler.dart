@@ -1,13 +1,7 @@
 import 'dart:convert' as convert;
-import 'dart:math';
-
 import 'package:assignment/models/product_model.dart';
 import 'package:assignment/util/constants.dart';
 import 'package:assignment/util/meta_icons.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:http/http.dart' as http;
 
 Map<String, String> icons = {
@@ -44,7 +38,8 @@ class ProductListService {
       var jsonResponse = convert.jsonDecode(response.body);
       print(jsonResponse);
       for (var product in jsonResponse) {
-        productList.add(Product(
+        category.add(product['productAvailability']);
+        productList.add(Product.named(
             productId: product['productId'],
             productColor: product['productColor'],
             productAvailability: product['productAvailability'],
@@ -59,6 +54,7 @@ class ProductListService {
             categoryIcon: icons[product['productCategory'].toString()]));
       }
       print(icons);
+      print(category.toSet());
       return productList;
     }
   }

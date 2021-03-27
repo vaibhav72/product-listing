@@ -23,4 +23,5 @@ class MetaIcons {
   static const String tools = 'assets/icons/tools.svg';
   static const String rupee = 'assets/icons/rupee.svg';
   static const String error = 'assets/icons/error.png';
+  static const String loading = 'assets/icons/loading.png';
 }

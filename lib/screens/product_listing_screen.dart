@@ -3,12 +3,11 @@ import 'dart:ui';
 import 'package:assignment/handlers/product_list_handler.dart';
 import 'package:assignment/models/product_model.dart';
 import 'package:assignment/screens/view_product.dart';
+import 'package:assignment/util/meta_colors.dart';
 import 'package:assignment/util/meta_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:random_color/random_color.dart';
 
 class ProductListing extends StatefulWidget {
   @override
@@ -18,11 +17,8 @@ class ProductListing extends StatefulWidget {
 class _ProductListingState extends State<ProductListing> {
   final ScrollController scrollController = ScrollController();
   Color color1 = Color(0xff53855E);
-  Color color2 = Color(0xff20AB87);
-  Color color3 = Color(0xff00938B);
-  Color color4 = Color(0xff007984);
-  Color color5 = Color(0xff206072);
-  Color color6 = Color(0xff2F4858);
+
+  Color color7 = Color(0xffFFDF82);
   List<Product> productList = [];
   bool showReloading = false;
 
@@ -68,9 +64,9 @@ class _ProductListingState extends State<ProductListing> {
                     product: productList[index],
                   ))),
       child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(10.0),
         child: Container(
-          height: 300,
+          height: MediaQuery.of(context).size.height * .38,
           child: Hero(
             tag: productList[index].productId,
             child: Material(
@@ -87,27 +83,16 @@ class _ProductListingState extends State<ProductListing> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
-                      height: 130,
+                      height: MediaQuery.of(context).size.height * .18,
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                color1,
-                                color1,
-                                color1,
-                                color5,
-                                color6
-                              ])),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                      decoration:
+                          buildBoxDecorationForPrimaryGadientContainer(),
+                      child: ListView(
+                        controller: ScrollController(),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
@@ -117,7 +102,7 @@ class _ProductListingState extends State<ProductListing> {
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                         letterSpacing: 1.2),
                                   ),
@@ -137,9 +122,23 @@ class _ProductListingState extends State<ProductListing> {
                                 ),
                               ],
                             ),
-                            Text(productList[index].productSummary),
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(productList[index].productSummary),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Now in " +
+                                  productList[index].productAvailability,
+                              style: TextStyle(
+                                  color: color7,
+                                  fontSize: 15,
+                                  letterSpacing: 1.4),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -170,40 +169,42 @@ class _ProductListingState extends State<ProductListing> {
     );
   }
 
-  getImage(int index) {
-    try {
-      return FadeInImage.memoryNetwork(
-          imageErrorBuilder:
-              (BuildContext context, Object error, StackTrace trace) {
-            print(error);
-            return Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image(
-                    height: 100,
-                    width: 100,
-                    image: AssetImage(MetaIcons.error)),
-              ),
-            );
-          },
-          fit: BoxFit.cover,
-          placeholder: kTransparentImage,
-          image: productList[index].productImage);
-    } catch (NetworkImageLoadException) {
-      print("hey");
-    }
+  BoxDecoration buildBoxDecorationForPrimaryGadientContainer() {
+    return BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              MetaColors.primaryColor,
+              MetaColors.primaryColor,
+              MetaColors.primaryColor,
+              MetaColors.gradientColor2,
+              MetaColors.gradientColor3
+            ]));
   }
 
-  getImagePalette(ImageProvider imageProvider) async {
-    final PaletteGenerator paletteGenerator =
-        await PaletteGenerator.fromImageProvider(imageProvider);
-    return paletteGenerator.dominantColor.color;
+  Widget getImage(int index) {
+    return FadeInImage.memoryNetwork(
+        imageErrorBuilder:
+            (BuildContext context, Object error, StackTrace trace) {
+          print(error);
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image(
+                  height: 100, width: 100, image: AssetImage(MetaIcons.error)),
+            ),
+          );
+        },
+        fit: BoxFit.cover,
+        placeholder: kTransparentImage,
+        image: productList[index].productImage);
   }
 
   void getProductList() async {
     var products = await ProductListService.getProducts();
-
     setState(() {
       productList = products;
     });
